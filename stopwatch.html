@@ -1,0 +1,125 @@
+
+<html>
+<head>
+    <title>Stopwatch</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Trirong">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: "Trirong", sans-serif;
+        }
+        h1 {
+            position: absolute;
+            top: 20px;
+        }
+        .time {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .Buttons {
+            color: white;
+            font-family: "Trirong", sans-serif;
+            font-size: 16px;
+            border-left: 10px solid black;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+        .Buttons:hover {
+            box-shadow: 0 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <h1>STOPWATCH</h1>
+    <div class="time" id="display">00:00:00:000</div>
+    <div class="button-container">
+        <button id="startButton" class="Buttons">START</button>
+        <button id="pauseButton" class="Buttons" style="display:none;">PAUSE</button>
+        <button id="resumeButton" class="Buttons" style="display:none;">RESUME</button>
+        <button id="resetButton" class="Buttons">RESET</button>
+    </div>
+
+    <script>
+        let startTime;
+        let updatedTime;
+        let difference;
+        let tInterval;
+        let running = false;
+
+        const display = document.getElementById("display");
+        const startButton = document.getElementById("startButton");
+        const pauseButton = document.getElementById("pauseButton");
+        const resumeButton = document.getElementById("resumeButton");
+        const resetButton = document.getElementById("resetButton");
+
+        function startTimer() {
+            if (!running) {
+                startTime = new Date().getTime();
+                tInterval = setInterval(getShowTime, 1);
+                running = true;
+                startButton.style.display = "none";
+                pauseButton.style.display = "inline-block";
+            }
+        }
+
+        function pauseTimer() {
+            if (running) {
+                clearInterval(tInterval);
+                running = false;
+                pauseButton.style.display = "none";
+                resumeButton.style.display = "inline-block";
+            }
+        }
+
+        function resumeTimer() {
+            if (!running) {
+                startTime = new Date().getTime() - difference;
+                tInterval = setInterval(getShowTime, 1);
+                running = true;
+                resumeButton.style.display = "none";
+                pauseButton.style.display = "inline-block";
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(tInterval);
+            running = false;
+            display.innerHTML = "00:00:00:000";
+            startButton.style.display = "inline-block";
+            pauseButton.style.display = "none";
+            resumeButton.style.display = "none";
+        }
+
+        function getShowTime() {
+            updatedTime = new Date().getTime();
+            difference = updatedTime - startTime;
+            let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            let milliseconds = Math.floor(difference % 1000);
+            hours = (hours < 10) ? "0" + hours : hours;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+            milliseconds = (milliseconds < 10) ? "00" + milliseconds : (milliseconds < 100) ? "0" + milliseconds : milliseconds;
+            display.innerHTML = hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
+        }
+
+        startButton.addEventListener("click", startTimer);
+        pauseButton.addEventListener("click", pauseTimer);
+        resumeButton.addEventListener("click", resumeTimer);
+        resetButton.addEventListener("click", resetTimer);
+    </script>
+</body>
+</html>
